@@ -28,26 +28,18 @@ import { filterImageFromURL, deleteLocalFiles } from './util/util';
       });
     }
 
-    filterImageFromURL(req.query.image_url)
-      .then(path => {
-        res.sendFile(path, () => {
-          deleteLocalFiles([path]);
-        });
-      })
-      .catch(err => {
-        return res.status(422).json({
-          message: err.message
-        });
-      });
-    res.status(200).send({
-      status:"Ok",
-      message: "try GET image/filteredimage?image_url={{}}"
+    const filteredImage = await filterImageFromURL(req.query.image_url)
+    res.status(200).sendFile(filteredImage, () => {
+      deleteLocalFiles([filteredImage]);
     });
   });
 
-app.get('/', async (req, res) => {
-  res.status(200).send("Welcome");
-});
+  app.get('/', async (req, res) => {
+    res.status(200).send({
+      status: "Ok",
+      message: "try GET image/filteredimage?image_url={{}}"
+    });
+  });
   // Start the Server
   app.listen(port, () => {
     console.log(`server running http://localhost:${port}`);
