@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import { filterImageFromURL, deleteLocalFiles } from './util/util';
+import { Request, Response } from "express";
 
 (async () => {
 
@@ -15,7 +16,7 @@ import { filterImageFromURL, deleteLocalFiles } from './util/util';
 
   const Joi = require('joi');
 
-  app.get("/filteredimage", async (req, res) => {
+  app.get("/filteredimage", async (req: Request, res: Response) => {
     const urlSchema = Joi.object({
       image_url: Joi.string().uri().required()
     })
@@ -28,13 +29,13 @@ import { filterImageFromURL, deleteLocalFiles } from './util/util';
       });
     }
 
-    const filteredImage = await filterImageFromURL(req.query.image_url)
+    const filteredImage: string = await filterImageFromURL(req.query.image_url) as string;
     res.status(200).sendFile(filteredImage, () => {
       deleteLocalFiles([filteredImage]);
     });
   });
 
-  app.get('/', async (req, res) => {
+  app.get('/', async (req: Request, res: Response) => {
     res.status(200).send({
       status: "Ok",
       message: "try GET image/filteredimage?image_url={{}}"
